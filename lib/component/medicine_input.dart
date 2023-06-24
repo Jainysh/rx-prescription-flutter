@@ -166,21 +166,23 @@ class _MedicineInputState extends State<MedicineInput> {
                           Expanded(
                               flex: 6,
                               child: Autocomplete<String>(
-                                optionsBuilder:
-                                    (TextEditingValue textEditingValue) {
-                                  if (textEditingValue.text == '') {
-                                    return dosageNames;
-                                  }
-                                  detailsControl.value = textEditingValue.text;
-                                  return dosageNames.where((String option) {
-                                    return option.toLowerCase().contains(
-                                        textEditingValue.text.toLowerCase());
-                                  });
-                                },
-                                onSelected: (String selection) {
-                                  detailsControl.value = selection;
-                                },
-                              )),
+                                  optionsBuilder:
+                                      (TextEditingValue textEditingValue) {
+                                    if (textEditingValue.text == '') {
+                                      return dosageNames;
+                                    }
+                                    detailsControl.value =
+                                        textEditingValue.text;
+                                    return dosageNames.where((String option) {
+                                      return option.toLowerCase().contains(
+                                          textEditingValue.text.toLowerCase());
+                                    });
+                                  },
+                                  onSelected: (String selection) {
+                                    detailsControl.value = selection;
+                                  },
+                                  initialValue: TextEditingValue(
+                                      text: detailsControl.value ?? ""))),
                           const SizedBox(width: 16.0),
                           Expanded(
                               flex: 3,

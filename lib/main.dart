@@ -80,11 +80,6 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                       border:
                           pw.Border.all(color: PdfColor.fromHex("000000")))),
               pw.Container(
-                  // decoration: pw.BoxDecoration(
-                  //     // border: pw.Border.symmetric(horizontal: pw.BorderSide(color: PdfColor.fromHex("000000"))),
-
-                  //   ),
-
                   child: pw.Padding(
                       padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 16),
                       child: pw.Row(
@@ -98,38 +93,38 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                                 style: const pw.TextStyle(fontSize: fontSize))
                           ]))),
               for (var medicine in medicines)
-                pw.Column(children: [
-                  pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 8),
-                      child: pw.Row(
-                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                          children: [
-                            pw.Expanded(
-                                child: pw.Text(
-                                    "${medicine.type}. ${medicine.name}",
-                                    style:
-                                        const pw.TextStyle(fontSize: fontSize),
-                                    softWrap: true),
-                                flex: 8),
-                            pw.Expanded(
-                                child: pw.Text(
-                                    "(${medicine.quantity.toString()})",
-                                    textAlign: pw.TextAlign.right,
-                                    style:
-                                        const pw.TextStyle(fontSize: fontSize)),
-                                flex: 1)
-                          ])),
-                  pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(16, 0, 8, 0),
-                      child: pw.Row(children: [
-                        for (var frequency in medicine.frequency ?? [])
-                          // pw.Expanded(
-                          //     child:
-                          pw.Text(
-                              '${frequency.quantity} ${frequency.details} - ')
-                        // )
-                      ]))
-                ])
+                pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Padding(
+                          padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 8),
+                          child: pw.Row(
+                              mainAxisAlignment:
+                                  pw.MainAxisAlignment.spaceBetween,
+                              children: [
+                                pw.Expanded(
+                                    child: pw.Text(
+                                        "${medicine.type}. ${medicine.name}",
+                                        style: const pw.TextStyle(
+                                            fontSize: fontSize),
+                                        softWrap: true),
+                                    flex: 8),
+                                pw.Expanded(
+                                    child: pw.Text(
+                                        "(${medicine.quantity.toString()})",
+                                        textAlign: pw.TextAlign.right,
+                                        style: const pw.TextStyle(
+                                            fontSize: fontSize)),
+                                    flex: 1)
+                              ])),
+                      pw.Padding(
+                          padding: const pw.EdgeInsets.fromLTRB(16, 0, 8, 0),
+                          child: pw.Text(formatMedicineFrequency(medicine),
+                              softWrap: true,
+                              style: const pw.TextStyle(fontSize: fontSize - 2))
+                          // )
+                          )
+                    ])
             ]),
           );
         }));
@@ -142,7 +137,7 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
     if (await Permission.manageExternalStorage.request().isGranted) {
       await OpenFile.open(filePath);
     } else {
-      print("Permission denied");
+      // TODO: notify if pdf opening fails with path where this is stored
     }
   }
 
@@ -239,6 +234,23 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                   ),
                 ],
               ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (context) => Padding(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                        child: const MedicineInput()),
+                  ).then((value) => addToForm(value));
+                },
+                icon: const Icon(
+                  Icons.add,
+                  size: 24.0,
+                ),
+                label: const Text('Add Medicine'),
+              ),
               if (medicines.isNotEmpty)
                 ListView.builder(
                     itemBuilder: (context, index) {
@@ -250,27 +262,16 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                     },
                     shrinkWrap: true,
                     itemCount: medicines.length),
-              // if (medicine.isNotEmpty)
-              IconButton(
-                  onPressed: printPrescription,
-                  icon: const Icon(Icons.download)),
             ],
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            builder: (context) => Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
-                child: const MedicineInput()),
-          ).then((value) => addToForm(value));
-        },
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: medicines.isNotEmpty
+          ? FloatingActionButton(
+              onPressed: printPrescription,
+              child: const Icon(Icons.print),
+            )
+          : Container(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }

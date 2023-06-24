@@ -2,6 +2,10 @@
 
 A new Flutter project.
 
+## Build and release apk
+
+`flutter build apk --no-tree-shake-icons`
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

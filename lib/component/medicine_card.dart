@@ -16,10 +16,7 @@ class MedicineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String result = '';
-    for (var frequencyData in medicine.frequency ?? []) {
-      result += '${frequencyData.quantity} ${frequencyData.details} |';
-    }
+    String result = formatMedicineFrequency(medicine);
 
     void updateMedicineData() {
       showModalBottomSheet(
@@ -42,6 +39,7 @@ class MedicineCard extends StatelessWidget {
           children: [
             Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -79,4 +77,13 @@ class MedicineCard extends StatelessWidget {
       ),
     );
   }
+}
+
+String formatMedicineFrequency(Medicine medicine) {
+  String result = '';
+  for (var i = 0; i < (medicine.frequency ?? []).length; i++) {
+    result +=
+        '${medicine.frequency![i].quantity} ${medicine.frequency![i].details} ${i != (medicine.frequency ?? []).length - 1 ? " -- " : ''}';
+  }
+  return result;
 }
