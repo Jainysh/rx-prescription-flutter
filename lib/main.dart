@@ -90,10 +90,11 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                       child: pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
-                            pw.Text("Name: ${form.control('name').value}",
+                            pw.Text(
+                                "Name: ${form.control('name').value ?? '-'}",
                                 style: const pw.TextStyle(fontSize: fontSize)),
                             pw.Text(
-                                "${form.control("gender").value} - ${form.control("age").value} years",
+                                "${form.control("gender").value ?? ''} ${form.control("age").value != null ? '- ${form.control("age").value} years' : ''}",
                                 style: const pw.TextStyle(fontSize: fontSize))
                           ]))),
               for (var medicine in medicines)
@@ -103,7 +104,6 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                       child: pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
-                            pw.Text(medicine.frequency![0].details),
                             pw.Expanded(
                                 child: pw.Text(
                                     "${medicine.type}. ${medicine.name}",
@@ -112,13 +112,23 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                                     softWrap: true),
                                 flex: 8),
                             pw.Expanded(
-                                child: pw.Text("(${medicine.quantity.toString()})",
-                                textAlign: pw.TextAlign.right,
+                                child: pw.Text(
+                                    "(${medicine.quantity.toString()})",
+                                    textAlign: pw.TextAlign.right,
                                     style:
-                                        const pw.TextStyle(fontSize: fontSize))
-                                      ,
+                                        const pw.TextStyle(fontSize: fontSize)),
                                 flex: 1)
-                          ]))
+                          ])),
+                  pw.Padding(
+                      padding: const pw.EdgeInsets.fromLTRB(16, 0, 8, 0),
+                      child: pw.Row(children: [
+                        for (var frequency in medicine.frequency ?? [])
+                          // pw.Expanded(
+                          //     child:
+                          pw.Text(
+                              '${frequency.quantity} ${frequency.details} - ')
+                        // )
+                      ]))
                 ])
             ]),
           );
@@ -242,7 +252,8 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                     itemCount: medicines.length),
               // if (medicine.isNotEmpty)
               IconButton(
-                  onPressed: printPrescription, icon: Icon(Icons.download)),
+                  onPressed: printPrescription,
+                  icon: const Icon(Icons.download)),
             ],
           ),
         ),
