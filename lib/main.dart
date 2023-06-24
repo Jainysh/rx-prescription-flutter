@@ -134,10 +134,29 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
     final file = File(filePath);
     final abctext = await file.writeAsBytes(await pdf.save());
 
-    if (await Permission.manageExternalStorage.request().isGranted) {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.storage,
+      Permission.manageExternalStorage,
+    ].request();
+    final storage = statuses[Permission.storage];
+    final manageExternalStorage = statuses[Permission.manageExternalStorage];
+
+    if (storage!.isGranted || manageExternalStorage!.isGranted) {
       await OpenFile.open(filePath);
     } else {
-      // TODO: notify if pdf opening fails with path where this is stored
+      const snackBar = SnackBar(
+        content: Text("Unable to open file, please contact developer"),
+        // duration: Duration(seconds: 5),
+        // action: SnackBarAction(
+        //   label: 'Undo',
+        //   onPressed: () {
+        //     // Some code to undo the change.
+        //   },
+        // ),
+      );
+      // Find the ScaffoldMessenger in the widget tree
+      // and use it to show a SnackBar.
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 
