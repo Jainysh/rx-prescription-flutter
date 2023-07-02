@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -35,8 +36,8 @@ class PrescriptionForm extends StatefulWidget {
 class _PrescriptionFormState extends State<PrescriptionForm> {
   FormGroup form = FormGroup({
     'name': FormControl<String>(),
-    'age': FormControl<int>(),
-    'gender': FormControl<String>(value: 'Male'),
+    // 'age': FormControl<int>(),
+    // 'gender': FormControl<String>(value: 'Male'),
   });
 
   List<Medicine> medicines = [];
@@ -65,20 +66,28 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
     DateTime now = DateTime.now();
     DateTime date = DateTime(now.year, now.month, now.day);
 
+    final header = pw.MemoryImage(
+      (await rootBundle.load('assets/images/header.png')).buffer.asUint8List(),
+    );
+
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a5,
+        margin: const pw.EdgeInsets.all(16),
         build: (pw.Context context) {
           return pw.Container(
             child: pw.Column(children: [
-              pw.Row(children: [
-                pw.Text("Rx", style: const pw.TextStyle(fontSize: fontSize)),
-                pw.Text(getFormattedDate(),
-                    style: const pw.TextStyle(fontSize: fontSize)),
-              ], mainAxisAlignment: pw.MainAxisAlignment.spaceBetween),
+              pw.Container(
+                  child: pw.Image(header),
+                  padding: const pw.EdgeInsets.all(12)),
               pw.Container(
                   decoration: pw.BoxDecoration(
                       border:
                           pw.Border.all(color: PdfColor.fromHex("000000")))),
+              // pw.Row(children: [
+              //   pw.Text(getFormattedDate(),
+              //       style: const pw.TextStyle(fontSize: fontSize),
+              //       textAlign: pw.TextAlign.right),
+              // ], mainAxisAlignment: pw.MainAxisAlignment.end),
               pw.Container(
                   child: pw.Padding(
                       padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 16),
@@ -86,18 +95,27 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             pw.Text(
-                                "Name: ${form.control('name').value ?? '-'}",
+                                "Patient Name: ${form.control('name').value ?? '-'}",
                                 style: const pw.TextStyle(fontSize: fontSize)),
                             pw.Text(
-                                "${form.control("gender").value ?? ''} ${form.control("age").value != null ? '- ${form.control("age").value} years' : ''}",
-                                style: const pw.TextStyle(fontSize: fontSize))
+                              getFormattedDate(),
+                              style: const pw.TextStyle(fontSize: fontSize),
+                            )
+                            // pw.Text(
+                            //     "${form.control("gender").value ?? ''} ${form.control("age").value != null ? '- ${form.control("age").value} years' : ''}",
+                            //     style: const pw.TextStyle(fontSize: fontSize))
                           ]))),
+              pw.Row(mainAxisAlignment: pw.MainAxisAlignment.start, children: [
+                pw.Text("Rx",
+                    style: pw.TextStyle(
+                        fontSize: fontSize, fontWeight: pw.FontWeight.bold)),
+              ]),
               for (var medicine in medicines)
                 pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Padding(
-                          padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 8),
+                          padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 4),
                           child: pw.Row(
                               mainAxisAlignment:
                                   pw.MainAxisAlignment.spaceBetween,
@@ -118,13 +136,34 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                                     flex: 1)
                               ])),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.fromLTRB(16, 0, 8, 0),
+                          padding: const pw.EdgeInsets.fromLTRB(16, 0, 8, 8),
                           child: pw.Text(formatMedicineFrequency(medicine),
                               softWrap: true,
                               style: const pw.TextStyle(fontSize: fontSize - 2))
                           // )
                           )
-                    ])
+                    ]),
+              pw.Container(
+                  // decoration: pw.BoxDecoration(color: PdfColor.fromHex("#ddd")),
+                  width: 1000,
+                  padding: pw.EdgeInsets.fromLTRB(
+                      0,
+                      (8.0 *
+                          ((12 - medicines.length) > 0
+                              ? 12 - medicines.length
+                              : 1)),
+                      0,
+                      0),
+                  child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.end,
+                      children: [
+                        pw.Text("Dr. Vikram N. Jain",
+                            textAlign: pw.TextAlign.right,
+                            style: const pw.TextStyle(fontSize: fontSize)),
+                        pw.Text("Reg. 2001/07/2514",
+                            textAlign: pw.TextAlign.right,
+                            style: const pw.TextStyle(fontSize: fontSize - 4))
+                      ]))
             ]),
           );
         }));
@@ -178,7 +217,7 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
 
   void resetForm() {
     form.reset();
-    form.control('gender').value = 'Male';
+    // form.control('gender').value = 'Male';
     setState(() {
       medicines = [];
     });
@@ -195,7 +234,8 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ReactiveForm(
+        child: SingleChildScrollView(
+            child: ReactiveForm(
           formGroup: form,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -210,49 +250,49 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
               const SizedBox(
                 height: 16.0,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Gender'),
-                        ReactiveDropdownField<String>(
-                          formControlName: 'gender',
-                          items: const [
-                            DropdownMenuItem<String>(
-                              value: 'Male',
-                              child: Text('Male'),
-                            ),
-                            DropdownMenuItem<String>(
-                              value: 'Female',
-                              child: Text('Female'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 16.0,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('Age'),
-                        ReactiveTextField(
-                          keyboardType: TextInputType.number,
-                          formControlName: 'age',
-                          decoration: const InputDecoration(
-                            hintText: "Patient's age",
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           const Text('Gender'),
+              //           ReactiveDropdownField<String>(
+              //             formControlName: 'gender',
+              //             items: const [
+              //               DropdownMenuItem<String>(
+              //                 value: 'Male',
+              //                 child: Text('Male'),
+              //               ),
+              //               DropdownMenuItem<String>(
+              //                 value: 'Female',
+              //                 child: Text('Female'),
+              //               ),
+              //             ],
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //     const SizedBox(
+              //       width: 16.0,
+              //     ),
+              //     Expanded(
+              //       child: Column(
+              //         crossAxisAlignment: CrossAxisAlignment.start,
+              //         children: [
+              //           const Text('Age'),
+              //           ReactiveTextField(
+              //             keyboardType: TextInputType.number,
+              //             formControlName: 'age',
+              //             decoration: const InputDecoration(
+              //               hintText: "Patient's age",
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
               ElevatedButton.icon(
                 onPressed: () {
                   showModalBottomSheet(
@@ -283,7 +323,7 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                     itemCount: medicines.length),
             ],
           ),
-        ),
+        )),
       ),
       floatingActionButton: medicines.isNotEmpty
           ? FloatingActionButton(

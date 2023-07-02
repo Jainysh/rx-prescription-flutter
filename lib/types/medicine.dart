@@ -1,13 +1,13 @@
 class Prescription {
   final String patientName;
-  final String gender;
-  final int age;
+  final String? gender;
+  final int? age;
   final List<Medicine> medicines = [];
 
   Prescription(
       {required this.patientName,
-      required this.gender,
-      required this.age,
+      this.gender,
+      this.age,
       });
 }
 
@@ -29,7 +29,7 @@ class Medicine {
 
 class Frequency {
   final String details;
-  final int quantity;
+  final int? quantity;
 
-  Frequency({required this.details, required this.quantity});
+  Frequency({required this.details, this.quantity});
 }

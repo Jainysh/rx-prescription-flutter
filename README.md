@@ -6,6 +6,8 @@ A new Flutter project.
 
 `flutter build apk --no-tree-shake-icons`
 
+- [To test apk in real device](https://stackoverflow.com/questions/54444538/how-do-i-run-test-my-flutter-app-on-a-real-device)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

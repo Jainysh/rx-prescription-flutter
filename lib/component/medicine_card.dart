@@ -83,7 +83,8 @@ String formatMedicineFrequency(Medicine medicine) {
   String result = '';
   for (var i = 0; i < (medicine.frequency ?? []).length; i++) {
     result +=
-        '${medicine.frequency![i].quantity} ${medicine.frequency![i].details} ${i != (medicine.frequency ?? []).length - 1 ? " -- " : ''}';
+        // '${medicine.frequency![i].quantity} ${medicine.frequency![i].details} ${i != (medicine.frequency ?? []).length - 1 ? " -- " : ''}';
+        '${medicine.frequency![i].details} ${i != (medicine.frequency ?? []).length - 1 ? " -- " : ''}';
   }
   return result;
 }

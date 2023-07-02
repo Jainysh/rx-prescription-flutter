@@ -39,7 +39,7 @@ class _MedicineInputState extends State<MedicineInput> {
       for (var frequencyData in medicineData!.frequency ?? []) {
         final frequencyGroup = FormGroup({
           'details': FormControl<String>(value: frequencyData.details),
-          'quantity': FormControl<int>(value: frequencyData.quantity),
+          // 'quantity': FormControl<int>(value: frequencyData.quantity),
         });
         frequencyControl.add(frequencyGroup);
       }
@@ -59,7 +59,7 @@ class _MedicineInputState extends State<MedicineInput> {
             Row(
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -74,6 +74,22 @@ class _MedicineInputState extends State<MedicineInput> {
                           DropdownMenuItem<String>(
                             value: 'Cap',
                             child: Text('Cap'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Syp',
+                            child: Text('Syp'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Cream',
+                            child: Text('Cream'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Ointment',
+                            child: Text('Ointment'),
+                          ),
+                          DropdownMenuItem<String>(
+                            value: 'Soln',
+                            child: Text('Soln'),
                           ),
                         ],
                       ),
@@ -142,21 +158,21 @@ class _MedicineInputState extends State<MedicineInput> {
                       form.control('frequency.$index') as FormGroup;
                   final detailsControl =
                       frequencyControl.control('details') as FormControl;
-                  final quantityControl =
-                      frequencyControl.control('quantity') as FormControl;
-                  final dosageNames = [
-                    'Sakali', //'सकाळी नाष्टा नंतर',
-                    'Ratri', //'रात्री',
-                    // 'सकाळी',
-                    'Sandhyakali' // ,'संध्याकाळी जेवणानंतर'
-                  ];
-                  List<DropdownMenuItem<dynamic>> dosageDropdown = [];
-                  for (var dosage in dosageNames) {
-                    dosageDropdown.add(DropdownMenuItem<String>(
-                      value: dosage,
-                      child: Text(dosage),
-                    ));
-                  }
+                  // final quantityControl =
+                  //     frequencyControl.control('quantity') as FormControl;
+                  // final dosageNames = [
+                  //   'Sakali', //'सकाळी नाष्टा नंतर',
+                  //   'Ratri', //'रात्री',
+                  //   // 'सकाळी',
+                  //   'Sandhyakali' // ,'संध्याकाळी जेवणानंतर'
+                  // ];
+                  // List<DropdownMenuItem<dynamic>> dosageDropdown = [];
+                  // for (var dosage in dosageNames) {
+                  //   dosageDropdown.add(DropdownMenuItem<String>(
+                  //     value: dosage,
+                  //     child: Text(dosage),
+                  //   ));
+                  // }
                   return Card(
                       child: Padding(
                     padding: const EdgeInsets.fromLTRB(8, 0, 0, 8),
@@ -164,34 +180,42 @@ class _MedicineInputState extends State<MedicineInput> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Expanded(
-                              flex: 6,
-                              child: Autocomplete<String>(
-                                  optionsBuilder:
-                                      (TextEditingValue textEditingValue) {
-                                    if (textEditingValue.text == '') {
-                                      return dosageNames;
-                                    }
-                                    detailsControl.value =
-                                        textEditingValue.text;
-                                    return dosageNames.where((String option) {
-                                      return option.toLowerCase().contains(
-                                          textEditingValue.text.toLowerCase());
-                                    });
-                                  },
-                                  onSelected: (String selection) {
-                                    detailsControl.value = selection;
-                                  },
-                                  initialValue: TextEditingValue(
-                                      text: detailsControl.value ?? ""))),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                              flex: 3,
+                              // flex: 6,
                               child: ReactiveTextField(
-                                  formControl: quantityControl,
-                                  keyboardType: TextInputType.number,
+                                  formControl: detailsControl,
+                                  // keyboardType: TextInputType.number,
                                   decoration: const InputDecoration(
-                                    labelText: 'Quantity',
+                                    labelText: 'Dose details',
                                   ))),
+                          // Expanded(
+                          //     flex: 6,
+                          //     child: Autocomplete<String>(
+                          //         optionsBuilder:
+                          //             (TextEditingValue textEditingValue) {
+                          //           if (textEditingValue.text == '') {
+                          //             return dosageNames;
+                          //           }
+                          //           detailsControl.value =
+                          //               textEditingValue.text;
+                          //           return dosageNames.where((String option) {
+                          //             return option.toLowerCase().contains(
+                          //                 textEditingValue.text.toLowerCase());
+                          //           });
+                          //         },
+                          //         onSelected: (String selection) {
+                          //           detailsControl.value = selection;
+                          //         },
+                          //         initialValue: TextEditingValue(
+                          //             text: detailsControl.value ?? ""))),
+                          // const SizedBox(width: 16.0),
+                          // Expanded(
+                          //     flex: 3,
+                          //     child: ReactiveTextField(
+                          //         formControl: quantityControl,
+                          //         keyboardType: TextInputType.number,
+                          //         decoration: const InputDecoration(
+                          //           labelText: 'Quantity',
+                          //         ))),
                           IconButton(
                             onPressed: () {
                               final formArray =
@@ -204,18 +228,20 @@ class _MedicineInputState extends State<MedicineInput> {
                         ]),
                   ));
                 }),
-            ElevatedButton(
-                onPressed: () {
-                  final formArray = form.control('frequency') as FormArray;
-                  formArray.add(FormGroup({
-                    'details': FormControl<String>(),
-                    'quantity': FormControl<int>(),
-                  }));
-                  setState(() {});
-                },
-                child: Text(form.control('frequency').value.length > 0
-                    ? 'Add more'
-                    : 'Add Dosage Information')),
+            if (form.control('frequency').value.length == 0)
+              ElevatedButton(
+                  onPressed: () {
+                    final formArray = form.control('frequency') as FormArray;
+                    formArray.add(FormGroup({
+                      'details': FormControl<String>(),
+                      // 'quantity': FormControl<int>(),
+                    }));
+                    setState(() {});
+                  },
+                  // child: Text(form.control('frequency').value.length > 0
+                  //     ? 'Add more'
+                  //     : 'Add Dosage Information')),
+                  child: const Text('Add Dosage Information')),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -231,9 +257,9 @@ class _MedicineInputState extends State<MedicineInput> {
                     if (form.valid) {
                       final List<Frequency> frequencyValue = [];
                       for (var val in form.control("frequency").value) {
-                        final Frequency listItem = Frequency(
-                            details: val['details'],
-                            quantity: val['quantity'] ?? 0);
+                        final Frequency listItem =
+                            Frequency(details: val['details']);
+                        // quantity: val['quantity'] ?? 0);
                         frequencyValue.add(listItem);
                       }
 
