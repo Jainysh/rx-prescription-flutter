@@ -18,7 +18,12 @@ class _MedicineInputState extends State<MedicineInput> {
     'name': FormControl<String>(validators: [Validators.required]),
     // 'duration': FormControl<int>(validators: [Validators.required]),
     'quantity': FormControl<int>(validators: [Validators.required]),
-    'frequency': FormArray([])
+    'frequency': FormArray([
+      FormGroup({
+        'details': FormControl<String>(),
+        // 'quantity': FormControl<int>(),
+      })
+    ])
   });
 
   Medicine? medicineData;
@@ -36,6 +41,7 @@ class _MedicineInputState extends State<MedicineInput> {
       });
 
       final frequencyControl = form.control('frequency') as FormArray;
+      frequencyControl.clear();
       for (var frequencyData in medicineData!.frequency ?? []) {
         final frequencyGroup = FormGroup({
           'details': FormControl<String>(value: frequencyData.details),
@@ -249,10 +255,18 @@ class _MedicineInputState extends State<MedicineInput> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black // shape: ,
+                      ),
                   child: const Text('Cancel'),
                 ),
                 const SizedBox(width: 16.0),
                 ElevatedButton(
+                  // style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.white,
+                  //     foregroundColor: Colors.black // shape: ,
+                  //     ),
                   onPressed: () {
                     if (form.valid) {
                       final List<Frequency> frequencyValue = [];
@@ -276,12 +290,42 @@ class _MedicineInputState extends State<MedicineInput> {
                   },
                   child: const Text('Save'),
                 ),
+                // const SizedBox(width: 16.0),
+                // ElevatedButton(
+                //   onPressed: () {
+                //     if (form.valid) {
+                //       saveMedicine(context);
+                //       // do domehtig here
+                //     } else {
+                //       print("else called");
+                //     }
+                //   },
+                //   child: const Text('Save and Add More'),
+                // ),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+
+  void saveMedicine(BuildContext context) {
+    final List<Frequency> frequencyValue = [];
+    for (var val in form.control("frequency").value) {
+      final Frequency listItem = Frequency(details: val['details']);
+      // quantity: val['quantity'] ?? 0);
+      frequencyValue.add(listItem);
+    }
+
+    Medicine medicine = Medicine(
+        form.control("type").value,
+        form.control("name").value,
+        // form.control("duration").value ?? 0,
+        form.control("quantity").value ?? 0,
+        frequencyValue);
+    print({"medicine": medicine, "type": 'Add New'});
+    Navigator.of(context).pop({"medicine": medicine, "type": 'Add New'});
   }
 }
 

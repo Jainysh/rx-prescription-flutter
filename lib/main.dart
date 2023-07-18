@@ -62,12 +62,12 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
   void printPrescription() async {
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
 
-    const fontSize = 16.0;
+    const fontSize = 13.0;
     DateTime now = DateTime.now();
     DateTime date = DateTime(now.year, now.month, now.day);
 
     final header = pw.MemoryImage(
-      (await rootBundle.load('assets/images/header.png')).buffer.asUint8List(),
+      (await rootBundle.load('assets/images/header_1.png')).buffer.asUint8List(),
     );
 
     pdf.addPage(pw.Page(
