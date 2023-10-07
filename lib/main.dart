@@ -30,6 +30,7 @@ class PrescriptionForm extends StatefulWidget {
   const PrescriptionForm({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _PrescriptionFormState createState() => _PrescriptionFormState();
 }
 
@@ -67,18 +68,20 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
     DateTime date = DateTime(now.year, now.month, now.day);
 
     final header = pw.MemoryImage(
-      (await rootBundle.load('assets/images/header_1.png')).buffer.asUint8List(),
+      (await rootBundle.load('assets/images/header_2.png'))
+          .buffer
+          .asUint8List(),
     );
 
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a5,
-        margin: const pw.EdgeInsets.all(16),
+        margin: const pw.EdgeInsets.all(8),
         build: (pw.Context context) {
           return pw.Container(
             child: pw.Column(children: [
               pw.Container(
                   child: pw.Image(header),
-                  padding: const pw.EdgeInsets.all(12)),
+                  padding: const pw.EdgeInsets.only(bottom: 12)),
               pw.Container(
                   decoration: pw.BoxDecoration(
                       border:
@@ -90,7 +93,7 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
               // ], mainAxisAlignment: pw.MainAxisAlignment.end),
               pw.Container(
                   child: pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 16),
+                      padding: const pw.EdgeInsets.fromLTRB(16, 8, 16, 16),
                       child: pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
@@ -105,17 +108,22 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                             //     "${form.control("gender").value ?? ''} ${form.control("age").value != null ? '- ${form.control("age").value} years' : ''}",
                             //     style: const pw.TextStyle(fontSize: fontSize))
                           ]))),
-              pw.Row(mainAxisAlignment: pw.MainAxisAlignment.start, children: [
-                pw.Text("Rx",
-                    style: pw.TextStyle(
-                        fontSize: fontSize, fontWeight: pw.FontWeight.bold)),
-              ]),
+              pw.Padding(
+                  padding: const pw.EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  child: pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.start,
+                      children: [
+                        pw.Text("Rx",
+                            style: pw.TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: pw.FontWeight.bold)),
+                      ])),
               for (var medicine in medicines)
                 pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Padding(
-                          padding: const pw.EdgeInsets.fromLTRB(0, 8, 0, 4),
+                          padding: const pw.EdgeInsets.fromLTRB(20, 8, 20, 4),
                           child: pw.Row(
                               mainAxisAlignment:
                                   pw.MainAxisAlignment.spaceBetween,
@@ -136,7 +144,7 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                                     flex: 1)
                               ])),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.fromLTRB(16, 0, 8, 8),
+                          padding: const pw.EdgeInsets.fromLTRB(28, 0, 20, 8),
                           child: pw.Text(formatMedicineFrequency(medicine),
                               softWrap: true,
                               style: const pw.TextStyle(fontSize: fontSize - 2))
@@ -148,11 +156,11 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                   width: 1000,
                   padding: pw.EdgeInsets.fromLTRB(
                       0,
-                      (8.0 *
-                          ((12 - medicines.length) > 0
-                              ? 12 - medicines.length
+                      (44.0 *
+                          ((7 - medicines.length) > 0
+                              ? 7 - medicines.length
                               : 1)),
-                      0,
+                      20,
                       0),
                   child: pw.Column(
                       crossAxisAlignment: pw.CrossAxisAlignment.end,
