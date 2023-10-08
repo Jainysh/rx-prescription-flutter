@@ -94,6 +94,10 @@ class _MedicineInputState extends State<MedicineInput> {
                             child: Text('Ointment'),
                           ),
                           DropdownMenuItem<String>(
+                            value: 'Spray',
+                            child: Text('Spray'),
+                          ),
+                          DropdownMenuItem<String>(
                             value: 'Soln',
                             child: Text('Soln'),
                           ),

@@ -64,6 +64,7 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
     final pdf = pw.Document(version: PdfVersion.pdf_1_5, compress: true);
 
     const fontSize = 13.0;
+    const fontColor = "000000";
     DateTime now = DateTime.now();
     DateTime date = DateTime(now.year, now.month, now.day);
 
@@ -73,6 +74,11 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
           .asUint8List(),
     );
 
+    final rxIcon = pw.MemoryImage(
+        (await rootBundle.load('assets/images/rxIcon.png'))
+            .buffer
+            .asUint8List());
+
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a5,
         margin: const pw.EdgeInsets.all(8),
@@ -81,49 +87,54 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
             child: pw.Column(children: [
               pw.Container(
                   child: pw.Image(header),
-                  padding: const pw.EdgeInsets.only(bottom: 12)),
-              pw.Container(
-                  decoration: pw.BoxDecoration(
-                      border:
-                          pw.Border.all(color: PdfColor.fromHex("000000")))),
-              // pw.Row(children: [
-              //   pw.Text(getFormattedDate(),
-              //       style: const pw.TextStyle(fontSize: fontSize),
-              //       textAlign: pw.TextAlign.right),
-              // ], mainAxisAlignment: pw.MainAxisAlignment.end),
+                  padding: const pw.EdgeInsets.only(bottom: 4)),
+              // Border line below header
+              // pw.Container(
+              //     decoration: pw.BoxDecoration(
+              //         border:
+              //             pw.Border.all(color: PdfColor.fromHex("000000")))),
               pw.Container(
                   child: pw.Padding(
-                      padding: const pw.EdgeInsets.fromLTRB(16, 8, 16, 16),
+                      padding: const pw.EdgeInsets.fromLTRB(16, 8, 16, 8),
                       child: pw.Row(
                           mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                           children: [
                             pw.Text(
                                 "Patient Name: ${form.control('name').value ?? '-'}",
-                                style: const pw.TextStyle(fontSize: fontSize)),
+                                style: pw.TextStyle(
+                                    fontSize: fontSize,
+                                    color: PdfColor.fromHex(fontColor))),
                             pw.Text(
                               getFormattedDate(),
-                              style: const pw.TextStyle(fontSize: fontSize),
+                              style: pw.TextStyle(
+                                  fontSize: fontSize,
+                                  color: PdfColor.fromHex(fontColor)),
                             )
                             // pw.Text(
                             //     "${form.control("gender").value ?? ''} ${form.control("age").value != null ? '- ${form.control("age").value} years' : ''}",
                             //     style: const pw.TextStyle(fontSize: fontSize))
                           ]))),
+              // Border line below header
+              pw.Container(
+                  margin: const pw.EdgeInsets.fromLTRB(16, 0, 16, 0),
+                  decoration: pw.BoxDecoration(
+                      border:
+                          pw.Border.all(color: PdfColor.fromHex("000000")))),
               pw.Padding(
                   padding: const pw.EdgeInsets.fromLTRB(16, 0, 16, 0),
                   child: pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.start,
                       children: [
-                        pw.Text("Rx",
-                            style: pw.TextStyle(
-                                fontSize: fontSize,
-                                fontWeight: pw.FontWeight.bold)),
+                        pw.Container(
+                            child: pw.Image(rxIcon, height: 20, width: 20),
+                            padding: const pw.EdgeInsets.only(top: 12)),
                       ])),
               for (var medicine in medicines)
                 pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Padding(
-                          padding: const pw.EdgeInsets.fromLTRB(20, 8, 20, 4),
+                          padding: const pw.EdgeInsets.fromLTRB(28, 8, 26, 4),
                           child: pw.Row(
                               mainAxisAlignment:
                                   pw.MainAxisAlignment.spaceBetween,
@@ -131,23 +142,28 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                                 pw.Expanded(
                                     child: pw.Text(
                                         "${medicine.type}. ${medicine.name}",
-                                        style: const pw.TextStyle(
-                                            fontSize: fontSize),
+                                        style: pw.TextStyle(
+                                            fontSize: fontSize,
+                                            color: PdfColor.fromHex(fontColor)),
                                         softWrap: true),
                                     flex: 8),
                                 pw.Expanded(
                                     child: pw.Text(
                                         "(${medicine.quantity.toString()})",
                                         textAlign: pw.TextAlign.right,
-                                        style: const pw.TextStyle(
-                                            fontSize: fontSize)),
+                                        style: pw.TextStyle(
+                                            fontSize: fontSize,
+                                            color:
+                                                PdfColor.fromHex(fontColor))),
                                     flex: 1)
                               ])),
                       pw.Padding(
-                          padding: const pw.EdgeInsets.fromLTRB(28, 0, 20, 8),
+                          padding: const pw.EdgeInsets.fromLTRB(30, 0, 20, 8),
                           child: pw.Text(formatMedicineFrequency(medicine),
                               softWrap: true,
-                              style: const pw.TextStyle(fontSize: fontSize - 2))
+                              style: pw.TextStyle(
+                                  fontSize: fontSize - 2,
+                                  color: PdfColor.fromHex(fontColor)))
                           // )
                           )
                     ]),
@@ -156,7 +172,7 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                   width: 1000,
                   padding: pw.EdgeInsets.fromLTRB(
                       0,
-                      (44.0 *
+                      (45.0 *
                           ((7 - medicines.length) > 0
                               ? 7 - medicines.length
                               : 1)),
@@ -167,10 +183,14 @@ class _PrescriptionFormState extends State<PrescriptionForm> {
                       children: [
                         pw.Text("Dr. Vikram N. Jain",
                             textAlign: pw.TextAlign.right,
-                            style: const pw.TextStyle(fontSize: fontSize)),
+                            style: pw.TextStyle(
+                                fontSize: fontSize,
+                                color: PdfColor.fromHex(fontColor))),
                         pw.Text("Reg. 2001/07/2514",
                             textAlign: pw.TextAlign.right,
-                            style: const pw.TextStyle(fontSize: fontSize - 4))
+                            style: pw.TextStyle(
+                                fontSize: fontSize - 4,
+                                color: PdfColor.fromHex(fontColor)))
                       ]))
             ]),
           );

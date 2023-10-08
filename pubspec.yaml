@@ -69,6 +69,7 @@ flutter:
     - assets/images/header.png
     - assets/images/header_1.png
     - assets/images/header_2.png
+    - assets/images/rxIcon.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
